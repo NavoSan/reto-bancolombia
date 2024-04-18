@@ -49,9 +49,26 @@ def github_webhook():
             value_deserializer=lambda x: json.loads(x.decode('utf-8'))
         )
         # Leer mensajes del tópico
+        messages = []
+    
+        # Coloca un límite en el número de mensajes a consumir por request
+        max_messages = 10
+        count = 0
+        
         for message in consumer:
-            print(f"Received message: {message.value}")
-            return jsonify({'status': 'Received GitHub event', 'message':message.value}), 200 #, 'respuesta':respuesta}), 200
+            messages.append(message.value)
+            count += 1
+            if count >= max_messages:
+                break
+        
+        # Detiene el consumidor y cierra la conexión
+        consumer.close()
+        
+        # Devuelve todos los mensajes en un formato JSON
+        return jsonify({
+            'status': 'Received GitHub events',
+            'messages': messages
+        }), 200
     except Exception as e:
         print(e)
         last_request_status = f"Last request failed. Error: {str(e)}"
