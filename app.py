@@ -46,7 +46,7 @@ def github_webhook():
         return jsonify({'status': 'error', 'message': str(e)}), 400
 
 @app.route('/webhook/azure', methods=['POST'])
-def github_webhook():
+def azure_webhook():
     try:
         global last_request_status
         data = request.json
@@ -60,7 +60,7 @@ def github_webhook():
         return jsonify({'status': 'error', 'message': str(e)}), 400
     
 @app.route('/webhook/gitlab', methods=['POST'])
-def github_webhook():
+def gitlab_webhook():
     try:
         global last_request_status
         data = request.json
