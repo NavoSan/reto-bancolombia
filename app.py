@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from rutas import main 
-from kafka import KafkaProducer
+#from kafka import KafkaProducer
 import json
 from modules.controller import procesamiento_eventos
 
@@ -9,12 +9,12 @@ app = Flask(__name__)
 # Registro del Blueprint del archivo rutas.py
 app.register_blueprint(main)
 
-producer = KafkaProducer(bootstrap_servers='kafka:9092',
-                         value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+# producer = KafkaProducer(bootstrap_servers='kafka:9092',
+#                          value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 
-def send_event_to_kafka(topic, data):
-    producer.send(topic, data)
-    producer.flush()
+# def send_event_to_kafka(topic, data):
+#     producer.send(topic, data)
+#     producer.flush()
 
 
 last_request_status = "No requests received yet."
@@ -38,7 +38,7 @@ def github_webhook():
         data = request.json
         last_request_status = f"Last request was successful. Data received: {data}"
         #respuesta = procesamiento_eventos.procesar_evento_github(data)
-        send_event_to_kafka('github-events', data)
+        #send_event_to_kafka('github-events', data)
         return jsonify({'status': 'Received GitHub event'}), 200 #, 'respuesta':respuesta}), 200
     except Exception as e:
         print(e)
@@ -52,7 +52,7 @@ def azure_webhook():
         data = request.json
         last_request_status = f"Last request was successful. Data received: {data}"
         #respuesta = procesamiento_eventos.procesar_evento_azure(data)
-        send_event_to_kafka('azure-events', data)
+        #send_event_to_kafka('azure-events', data)
         return jsonify({'status': 'Received GitHub event'}), 200 #, 'respuesta':respuesta}), 200
     except Exception as e:
         print(e)
@@ -66,7 +66,7 @@ def gitlab_webhook():
         data = request.json
         last_request_status = f"Last request was successful. Data received: {data}"
         #respuesta = procesamiento_eventos.procesar_evento_gitlab(data)
-        send_event_to_kafka('gitlab-events', data)
+        #send_event_to_kafka('gitlab-events', data)
         return jsonify({'status': 'Received GitHub event'}), 200 #, 'respuesta':respuesta}), 200
     except Exception as e:
         print(e)
@@ -77,4 +77,5 @@ def gitlab_webhook():
 def webhook_status():
     return render_template('webhook_status.html', message=last_request_status)
 
-
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8880, debug=True)
