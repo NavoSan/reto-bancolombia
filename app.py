@@ -43,7 +43,7 @@ def github_webhook():
         consumer = KafkaConsumer(
             'github-events',  # Nombre del tópico de Kafka
             bootstrap_servers=['kafka:29092'],  # Lista de brokers de Kafka
-            auto_offset_reset='latest',
+            auto_offset_reset='earliest',
             enable_auto_commit=True,
             group_id='my-consumer-group',
             value_deserializer=lambda x: json.loads(x.decode('utf-8'))
