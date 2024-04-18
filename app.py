@@ -42,7 +42,7 @@ def github_webhook():
         print("se inserta")
         consumer = KafkaConsumer(
             'github-events',  # Nombre del tópico de Kafka
-            bootstrap_servers=['localhost:29092'],  # Lista de brokers de Kafka
+            bootstrap_servers=['kafka:29092'],  # Lista de brokers de Kafka
             auto_offset_reset='earliest',  # Comenzar a leer desde el principio del tópico si no hay offset guardado
             group_id='my-group',  # ID del grupo de consumidores, todos los consumidores con el mismo group_id trabajan juntos
             enable_auto_commit=True,  # Permite que el consumidor guarde automáticamente los offsets
@@ -69,7 +69,7 @@ def azure_webhook():
         print("se inserta")
         consumer = KafkaConsumer(
             'github-events',  # Nombre del tópico de Kafka
-            bootstrap_servers=['localhost:29092'],  # Lista de brokers de Kafka
+            bootstrap_servers=['kafka:29092'],  # Lista de brokers de Kafka
             auto_offset_reset='earliest',  # Comenzar a leer desde el principio del tópico si no hay offset guardado
             group_id='my-group',  # ID del grupo de consumidores, todos los consumidores con el mismo group_id trabajan juntos
             enable_auto_commit=True,  # Permite que el consumidor guarde automáticamente los offsets
