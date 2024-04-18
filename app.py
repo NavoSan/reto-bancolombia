@@ -39,6 +39,18 @@ def github_webhook():
         last_request_status = f"Last request was successful. Data received: {data}"
         #respuesta = procesamiento_eventos.procesar_evento_github(data)
         send_event_to_kafka('github-events', data)
+        print("se inserta")
+        consumer = KafkaConsumer(
+            'github-events',  # Nombre del tópico de Kafka
+            bootstrap_servers=['localhost:29092'],  # Lista de brokers de Kafka
+            auto_offset_reset='earliest',  # Comenzar a leer desde el principio del tópico si no hay offset guardado
+            group_id='my-group',  # ID del grupo de consumidores, todos los consumidores con el mismo group_id trabajan juntos
+            enable_auto_commit=True,  # Permite que el consumidor guarde automáticamente los offsets
+            value_deserializer=lambda x: x.decode('utf-8')  # Deserializar el mensaje de bytes a string
+        )
+        # Leer mensajes del tópico
+        for message in consumer:
+            print(f"Received message: {message.value}")
         return jsonify({'status': 'Received GitHub event'}), 200 #, 'respuesta':respuesta}), 200
     except Exception as e:
         print(e)
