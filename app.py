@@ -51,7 +51,7 @@ def github_webhook():
         # Leer mensajes del tópico
         for message in consumer:
             print(f"Received message: {message.value}")
-        return jsonify({'status': 'Received GitHub event'}), 200 #, 'respuesta':respuesta}), 200
+            return jsonify({'status': 'Received GitHub event', 'message':message.value}), 200 #, 'respuesta':respuesta}), 200
     except Exception as e:
         print(e)
         last_request_status = f"Last request failed. Error: {str(e)}"
