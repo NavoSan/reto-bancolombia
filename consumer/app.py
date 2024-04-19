@@ -10,6 +10,8 @@ app = Flask(__name__)
 app.register_blueprint(main)
 socketio = SocketIO(app)
 
+messages = []
+
 def kafka_consumer():
     consumer = KafkaConsumer(
         'github-events',
@@ -20,29 +22,9 @@ def kafka_consumer():
         group_id='stream-consumer',
         value_deserializer=lambda x: json.loads(x.decode('utf-8'))
     )
-
-    global messages
-    
-    # Coloca un límite en el número de mensajes a consumir por request
-    max_messages = 10
-    count = 0
-    
     for message in consumer:
-        messages.append(message.value)
-        count += 1
-        if count >= max_messages:
-            break
-    
-    # Detiene el consumidor y cierra la conexión
-    consumer.close()
-    
-    # Devuelve todos los mensajes en un formato JSON
-    return jsonify({
-        'status': 'Received GitHub events',
-        'messages': messages
-    }), 200
-    # for message in consumer:
-    #     socketio.emit('new_message', {'data': message.value}, namespace='/stream')
+        messages.append(message.value)  # Añade cada mensaje a la lista global
+        socketio.emit('new_message', {'data': message.value}, namespace='/stream')
 
 
 @app.route('/consume', methods=['GET'])
