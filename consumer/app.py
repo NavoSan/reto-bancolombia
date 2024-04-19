@@ -17,13 +17,13 @@ def kafka_consumer():
         'github-events',
         'azure-events',
         'gitlab-events',
-        bootstrap_servers='localhost:9092',
+        bootstrap_servers='kafka:29092',
         auto_offset_reset='earliest',
         group_id='stream-consumer',
         value_deserializer=lambda x: json.loads(x.decode('utf-8'))
     )
     for message in consumer:
-        print(message)
+        app.logger.info(message.value)
         messages.append(message.value)  # Añade cada mensaje a la lista global
         socketio.emit('new_message', {'data': message.value}, namespace='/stream')
 
