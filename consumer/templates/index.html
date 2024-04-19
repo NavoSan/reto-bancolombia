@@ -1,43 +1,37 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <title>Kafka Consumer</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.1/socket.io.js" integrity="sha512-oFOCo2/3DtjrJG4N27BjSLQWoiBv171sK6a+JiWjp/7agxC2nCUP358AqzxkBUb5jX8g6CYLPdSKQTbC0weCwA==" crossorigin="anonymous"></script>
-    <script type="text/javascript" charset="utf-8">
+    <script type="text/javascript">
         $(document).ready(function() {
+            // Conectar al endpoint de Kafka con Socket.IO
             var socket = io.connect('http://localhost:9092/kafka');
 
-            socket.on('kafkaconsumer1', function(msg) {
-                $('#consumer').html("")
-            });
+            // Escuchar eventos del tipo 'kafkaconsumer' y agregar los datos recibidos al elemento con id 'consumer'
             socket.on('kafkaconsumer', function(msg) {
-                $('#consumer').append('<br>' + $('<div/>').text(msg.data).html());
+                $('#consumer').append('<p>' + $('<div/>').text(msg.data).html() + '</p>');
             });
 
-            socket.on('kafkaproducer', function(msg) {
-                $('#producer').append('<br>' + $('<div/>').text(msg.data).html());
+            // Opcional: Manejo de conexión y errores
+            socket.on('connect', function() {
+                console.log('Connected to Kafka Consumer namespace.');
             });
 
-            socket.on('logs', function(msg) {
-                $('#log').append('<br>' + $('<div/>').text(msg.data).html());
+            socket.on('disconnect', function() {
+                console.log('Disconnected from Kafka Consumer namespace.');
             });
 
-            $('form#emit').submit(function(event) {
-                socket.emit('kafkaproducer', $('#emit_data').val());
-                return false;
+            socket.on('error', function(err) {
+                console.error('Error received from server:', err);
             });
         });
     </script>
 </head>
 <body>
-<form id="emit" method="POST" action='#'>
-    <input type="text" name="emit_data" id="emit_data" placeholder="Message">
-    <input type="submit" value="Echo">
-</form>
-<h2>Logs</h2>
-<div id="log"></div>
-<h2>Producer</h2>
-<div id="producer"></div>
-<h2>Consumer</h2>
-<div id="consumer"></div>
+    <h1>Kafka Consumer Events</h1>
+    <div id="consumer"></div>
 </body>
 </html>
