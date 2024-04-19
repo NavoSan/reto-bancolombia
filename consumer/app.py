@@ -22,7 +22,6 @@ def consume():
     try:
         # Consume messages
         for message in consumer:
-            # Asume que quieres manejar los mensajes hasta recibir una solicitud GET
             messages.append({
                 'topic': message.topic,
                 'message': message.value
@@ -30,7 +29,8 @@ def consume():
             # Solo para demostración, podrías querer tener un control más sofisticado
             if len(messages) >= 10:  # Limita a 10 mensajes para no atascar el endpoint
                 break
-        return jsonify(messages), 200
+        return render_template('consume.html', messages=messages)
+    
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
