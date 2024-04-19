@@ -20,8 +20,29 @@ def kafka_consumer():
         group_id='stream-consumer',
         value_deserializer=lambda x: json.loads(x.decode('utf-8'))
     )
+
+    global messages
+    
+    # Coloca un límite en el número de mensajes a consumir por request
+    max_messages = 10
+    count = 0
+    
     for message in consumer:
-        socketio.emit('new_message', {'data': message.value}, namespace='/stream')
+        messages.append(message.value)
+        count += 1
+        if count >= max_messages:
+            break
+    
+    # Detiene el consumidor y cierra la conexión
+    consumer.close()
+    
+    # Devuelve todos los mensajes en un formato JSON
+    return jsonify({
+        'status': 'Received GitHub events',
+        'messages': messages
+    }), 200
+    # for message in consumer:
+    #     socketio.emit('new_message', {'data': message.value}, namespace='/stream')
 
 
 @app.route('/consume', methods=['GET'])
@@ -35,6 +56,10 @@ def test_connect():
 @socketio.on('disconnect', namespace='/stream')
 def test_disconnect():
     app.logger.info("Client disconnected")
+
+@app.route('/webhook-status')
+def webhook_status():
+    return render_template('webhook_status.html', message=messages)
 
 
 def run_kafka_consumer():
