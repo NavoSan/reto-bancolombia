@@ -3,6 +3,7 @@ from rutas import main
 from kafka import KafkaConsumer
 import json
 from flask_socketio import SocketIO
+from threading import Thread
 
 
 app = Flask(__name__)
@@ -36,5 +37,11 @@ def test_disconnect():
     app.logger.info("Client disconnected")
 
 
+def run_kafka_consumer():
+    thread = Thread(target=kafka_consumer)
+    thread.daemon = True  # Hacer el hilo daemon para que finalice cuando el proceso principal lo haga
+    thread.start()
+
 if __name__ == '__main__':
+    run_kafka_consumer()
     app.run(host='0.0.0.0', port=8890, debug=True)

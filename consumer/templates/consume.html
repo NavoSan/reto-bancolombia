@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Kafka Event Stream</title>
-    <script src="https://cdn.socket.io/socket.io-3.1.3.min.js"></script>
+    <title>Kafka Messages</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
-            var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/stream');
+            const socket = io.connect('http://' + document.domain + ':' + location.port + '/stream');
 
-            socket.on('new_message', function (msg) {
-                var node = document.createElement("LI");
-                var textnode = document.createTextNode(JSON.stringify(msg.data));
+            socket.on('new_message', function(data) {
+                const node = document.createElement("LI");
+                const textnode = document.createTextNode(JSON.stringify(data.data));
                 node.appendChild(textnode);
                 document.getElementById("messages").appendChild(node);
             });
@@ -18,7 +18,7 @@
     </script>
 </head>
 <body>
-    <h1>Kafka Messages</h1>
+    <h1>Received Kafka Messages</h1>
     <ul id="messages"></ul>
 </body>
 </html>
