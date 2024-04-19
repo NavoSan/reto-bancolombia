@@ -29,14 +29,22 @@ class conexionBD():
             return f"error: {e}"
     
     def insertBD(self, tabla, campos, valores):
+        """ Funcion para insertar multiples valores en la abse de datos
+        Args: 
+            tabla(str): nombre de la tabla en la base de datos
+            campos(list): nombre de las columnas de la tabla que se va a insertar
+            valores(list): cadena de valores de los datos que se vana a insertar
+        
+        returns: Cadena de texto en caso de exito y expecion de error en caso de fallo 
+        """
         try:
             conexion = self.__connectBD()
             campos_str = ', '.join(campos)
-            valores_placeholders = ', '.join(['%s'] * len(valores))  # Usa %s como placeholder para los valores
+            valores_placeholders = ', '.join(['%s'] * len(valores)) 
 
             sql = f"INSERT INTO {self.schema}.{tabla} ({campos_str}) VALUES ({valores_placeholders})"
 
-            self.cursor.execute(sql, valores)  # Usar execute cuando es una sola fila
+            self.cursor.execute(sql, valores)  
             self.connection.commit()
             return "Se ha insertado en la base de datos"
         except Exception as e:

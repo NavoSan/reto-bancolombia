@@ -31,10 +31,9 @@ def kafkaconsumer(message):
     consumer = KafkaConsumer(group_id='consumer-1',
                              bootstrap_servers=BOOTSTRAP_SERVERS)
     tp = TopicPartition(TOPIC_NAME, 0)
-    # register to the topic
+    # se registra al topico
     consumer.assign([tp])
 
-    # obtain the last offset value
     consumer.seek_to_end(tp)
     lastOffset = consumer.position(tp)
     consumer.seek_to_beginning(tp)

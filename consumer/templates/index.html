@@ -7,7 +7,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.1/socket.io.js" integrity="sha512-oFOCo2/3DtjrJG4N27BjSLQWoiBv171sK6a+JiWjp/7agxC2nCUP358AqzxkBUb5jX8g6CYLPdSKQTbC0weCwA==" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function() {
-            // Conectar al endpoint de Kafka con Socket.IO
             var socket = io.connect('http://localhost:8890/kafka');
             console.log(socket)
             // Escuchar eventos del tipo 'kafkaconsumer' y agregar los datos recibidos al elemento con id 'consumer'
@@ -16,7 +15,6 @@
                 $('#consumer').append('<p>' + $('<div/>').text(msg.data).html() + '</p>');
             });
 
-            // Opcional: Manejo de conexión y errores
             socket.on('connect', function() {
                 console.log('Connected to Kafka Consumer namespace.');
             });

@@ -8,6 +8,12 @@ class procesamiento_eventos:
         self.data = data
     
     def procesar_pipeline(self):
+        """ Funcion para procesar los eventos de tipo pipeline que llegan desde Azure
+        Args:     
+        json: diccionario con
+            event: nombre del evento procesado (pipeline), con este valor se sabe a cual tabla de la base de datos ingresar la información
+            data: diccionario con las columnas y valores que se insertan en la base de datos
+        """
         job = self.data.get('resource', {}).get('job', {})
         if job:
             # Extracción de datos del job
@@ -31,6 +37,12 @@ class procesamiento_eventos:
             return "Información de job no disponible"
     
     def procesar_commit(self):
+        """ Funcion para procesar los eventos de tipo commit que llegan desde Azure
+        Args:     
+        json: diccionario con
+            event: nombre del evento procesado (commit), con este valor se sabe a cual tabla de la base de datos ingresar la información
+            data: diccionario con las columnas y valores que se insertan en la base de datos
+        """
         commit = self.data.get('resource', {}).get('commits', {})
         if commit:
             commit_id = commit.get('commitId')
@@ -47,6 +59,12 @@ class procesamiento_eventos:
             return "Información de commit no disponible"
     
     def procesar_PR(self):
+        """ Funcion para procesar los eventos de tipo commit que llegan desde Azure
+        Args:     
+        json: diccionario con
+            event: nombre del evento procesado (Pull Request), con este valor se sabe a cual tabla de la base de datos ingresar la información
+            data: diccionario con las columnas y valores que se insertan en la base de datos
+        """
         pr_info = self.data.get('resource', {})
         if pr_info:
             pr_id = pr_info.get('pullRequestId')
@@ -68,6 +86,12 @@ class procesamiento_eventos:
     
     
     def obtener_tipo_evento(self):
+        """ Funcion para que obtiene el tipo de evento de la plataforma Azure, esta función identifica si es une vento relevante para el sistema
+        y llama a la función correspondiente al tipo de evento encontrado (commit, pipeline o PR)
+        Args:     
+        json: diccionario con
+            info: diccionario con las columnas y valores de acuerdo al evento determinado
+        """
         publisherId = self.data.get('publisherId')
         if 'pipelines' in publisherId:
             info = self.procesar_pipeline()
@@ -82,6 +106,11 @@ class procesamiento_eventos:
                 return info
 
     def procesar_evento_azure(self):
+        """ Funcion para que originalmente llama al evento, por ahora solo se tiene configurado el procesamiento de evento para Azure,
+        queda pendiente definición si llamar todos los eventos aqui o tener una función para procesar el evento de cada plataforma
+        Args:     
+        str: Cadena de conexión retornando un procesamiento exitoso
+        """
         event= self.obtener_tipo_evento()
         tipoEvento = event['event']
 

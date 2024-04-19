@@ -14,17 +14,14 @@
                 const textnode = document.createTextNode(JSON.stringify(data.data));
                 node.appendChild(textnode);
                 messagesContainer.appendChild(node);
-                // Remover mensaje de espera
                 document.getElementById("waiting").style.display = 'none';
             });
 
             socket.on('connect', function() {
-                // Muestra mensaje de espera
                 document.getElementById("waiting").innerHTML = "Esperando datos...";
             });
 
             socket.on('disconnect', function() {
-                // Verificar si no se recibieron mensajes y mostrar mensaje
                 if (document.getElementById("messages").children.length === 0) {
                     document.getElementById("waiting").innerHTML = "No se encontraron eventos.";
                 }
