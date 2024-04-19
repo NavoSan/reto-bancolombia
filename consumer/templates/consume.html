@@ -7,20 +7,34 @@
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
             const socket = io.connect('http://' + document.domain + ':' + location.port + '/stream');
-            console.log(document.domain)
-            console.log(location.port)
 
             socket.on('new_message', function(data) {
+                const messagesContainer = document.getElementById("messages");
                 const node = document.createElement("LI");
                 const textnode = document.createTextNode(JSON.stringify(data.data));
                 node.appendChild(textnode);
-                document.getElementById("messages").appendChild(node);
+                messagesContainer.appendChild(node);
+                // Remover mensaje de espera
+                document.getElementById("waiting").style.display = 'none';
+            });
+
+            socket.on('connect', function() {
+                // Muestra mensaje de espera
+                document.getElementById("waiting").innerHTML = "Esperando datos...";
+            });
+
+            socket.on('disconnect', function() {
+                // Verificar si no se recibieron mensajes y mostrar mensaje
+                if (document.getElementById("messages").children.length === 0) {
+                    document.getElementById("waiting").innerHTML = "No se encontraron eventos.";
+                }
             });
         });
     </script>
 </head>
 <body>
     <h1>Received Kafka Messages</h1>
+    <div id="waiting">Conectando...</div>
     <ul id="messages"></ul>
 </body>
 </html>
