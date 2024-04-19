@@ -8,7 +8,7 @@ app = Flask(__name__)
 # Registro del Blueprint del archivo rutas.py
 app.register_blueprint(main)
 
-producer = KafkaProducer(bootstrap_servers='kafka:9092',
+producer = KafkaProducer(bootstrap_servers='kafka:29092',
                          value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 
 def send_event_to_kafka(topic, data):

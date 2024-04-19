@@ -9,8 +9,8 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-BOOTSTRAP_SERVERS = 'kafka:9092'
-TOPIC_NAME = 'github-event'
+BOOTSTRAP_SERVERS = 'kafka:29092'
+TOPIC_NAME = 'github-events'
 
 
 @app.route('/')
