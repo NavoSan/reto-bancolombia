@@ -25,7 +25,7 @@ def kafka_consumer():
 
 @app.route('/consume', methods=['GET'])
 def consume():
-    return render_template('consume.html', messages=messages)
+    return render_template('consume.html')
 
 @socketio.on('connect', namespace='/stream')
 def test_connect():
