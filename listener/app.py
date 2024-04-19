@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, render_template
 from rutas import main 
 from kafka import KafkaProducer, KafkaConsumer
 import json
-from modules.controller import procesamiento_eventos
 
 app = Flask(__name__)
 
@@ -37,38 +36,9 @@ def github_webhook():
         global last_request_status
         data = request.json
         last_request_status = f"Last request was successful. Data received: {data}"
-        #respuesta = procesamiento_eventos.procesar_evento_github(data)
         send_event_to_kafka('github-events', data)
-        print("se inserta")
-        consumer = KafkaConsumer(
-            'github-events',  # Nombre del tópico de Kafka
-            bootstrap_servers=['kafka:29092'],  # Lista de brokers de Kafka
-            auto_offset_reset='earliest',
-            enable_auto_commit=True,
-            group_id='my-consumer-group',
-            value_deserializer=lambda x: json.loads(x.decode('utf-8'))
-        )
-        # Leer mensajes del tópico
-        messages = []
+        return jsonify({'status': 'Received GitHub events',}), 200
     
-        # Coloca un límite en el número de mensajes a consumir por request
-        max_messages = 10
-        count = 0
-        
-        for message in consumer:
-            messages.append(message.value)
-            count += 1
-            if count >= max_messages:
-                break
-        
-        # Detiene el consumidor y cierra la conexión
-        consumer.close()
-        
-        # Devuelve todos los mensajes en un formato JSON
-        return jsonify({
-            'status': 'Received GitHub events',
-            'messages': messages
-        }), 200
     except Exception as e:
         print(e)
         last_request_status = f"Last request failed. Error: {str(e)}"
@@ -80,23 +50,9 @@ def azure_webhook():
         global last_request_status
         data = request.json
         last_request_status = f"Last request was successful. Data received: {data}"
-        #respuesta = procesamiento_eventos.procesar_evento_azure(data)
         send_event_to_kafka('azure-events', data)
 
-        print("se inserta")
-        consumer = KafkaConsumer(
-            'github-events',  # Nombre del tópico de Kafka
-            bootstrap_servers=['kafka:29092'],  # Lista de brokers de Kafka
-            auto_offset_reset='earliest',  # Comenzar a leer desde el principio del tópico si no hay offset guardado
-            group_id='my-group',  # ID del grupo de consumidores, todos los consumidores con el mismo group_id trabajan juntos
-            enable_auto_commit=True,  # Permite que el consumidor guarde automáticamente los offsets
-            value_deserializer=lambda x: x.decode('utf-8')  # Deserializar el mensaje de bytes a string
-        )
-        # Leer mensajes del tópico
-        for message in consumer:
-            print(f"Received message: {message.value}")
-
-        return jsonify({'status': 'Received GitHub event'}), 200 #, 'respuesta':respuesta}), 200
+        return jsonify({'status': 'Received Azure event'}), 200 #, 'respuesta':respuesta}), 200
     except Exception as e:
         print(e)
         last_request_status = f"Last request failed. Error: {str(e)}"
@@ -108,9 +64,8 @@ def gitlab_webhook():
         global last_request_status
         data = request.json
         last_request_status = f"Last request was successful. Data received: {data}"
-        #respuesta = procesamiento_eventos.procesar_evento_gitlab(data)
         send_event_to_kafka('gitlab-events', data)
-        return jsonify({'status': 'Received GitHub event'}), 200 #, 'respuesta':respuesta}), 200
+        return jsonify({'status': 'Received GitLab event'}), 200 #, 'respuesta':respuesta}), 200
     except Exception as e:
         print(e)
         last_request_status = f"Last request failed. Error: {str(e)}"
