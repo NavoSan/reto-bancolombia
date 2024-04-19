@@ -59,7 +59,7 @@ def test_disconnect():
 
 @app.route('/webhook-status')
 def webhook_status():
-    return render_template('webhook_status.html', message=messages)
+    return render_template('index.html', message=messages)
 
 
 def run_kafka_consumer():
