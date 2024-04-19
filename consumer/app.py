@@ -17,7 +17,7 @@ def kafka_consumer():
         'github-events',
         'azure-events',
         'gitlab-events',
-        bootstrap_servers='kafka:29092',
+        bootstrap_servers='localhost:9092',
         auto_offset_reset='latest',
         group_id='stream-consumer',
         value_deserializer=lambda x: json.loads(x.decode('utf-8'))
