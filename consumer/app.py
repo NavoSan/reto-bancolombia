@@ -16,22 +16,6 @@ TOPIC_NAME = 'github-events'
 @app.route('/')
 @cross_origin()
 def home():
-    consumer = KafkaConsumer(group_id='consumer-1',
-                             bootstrap_servers=BOOTSTRAP_SERVERS)
-    tp = TopicPartition(TOPIC_NAME, 0)
-    # register to the topic
-    consumer.assign([tp])
-
-    # obtain the last offset value
-    consumer.seek_to_end(tp)
-    lastOffset = consumer.position(tp)
-    consumer.seek_to_beginning(tp)
-    emit('kafkaconsumer1', {'data': ''})
-    for message in consumer:
-        emit('kafkaconsumer', {'data': message.value.decode('utf-8')})
-        if message.offset == lastOffset - 1:
-            break
-    consumer.close()
     return render_template("index.html")
 
 """ Kafka endpoints """
