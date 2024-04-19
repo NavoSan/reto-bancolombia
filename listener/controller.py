@@ -20,12 +20,12 @@ class procesamiento_eventos:
 
             return {
                 'event': 'pipeline',
-                'Job ID': job_id,
-                'Job Name': job_name,
-                'Job State': job_state,
-                'Job Result': job_result,
-                'Start Time': start_time,
-                'Finish Time': finish_time
+                'job_id': job_id,
+                'job_name': job_name,
+                'job_state': job_state,
+                'job_result': job_result,
+                'start_time': start_time,
+                'finish_time': finish_time
             }
         else:
             return "Información de job no disponible"
@@ -39,9 +39,9 @@ class procesamiento_eventos:
             
             return {
                 'event': 'commit',
-                'Commit ID': commit_id,
-                'Commit Author': commit_author,
-                'Commit Date': commit_date,
+                'commit_id': commit_id,
+                'commit_author': commit_author,
+                'commit_date': commit_date,
             }
         else:
             return "Información de commit no disponible"
@@ -59,9 +59,9 @@ class procesamiento_eventos:
             return {
                 'event': 'PR', 
                 'data' : {
-                'PR ID': pr_id,
-                'PR Status': pr_status,
-                'PR Date': pr_date}
+                'pr_id': pr_id,
+                'pr_status': pr_status,
+                'pr_date': pr_date}
             }
         else:
             return "Información de Pull Request no disponible"
