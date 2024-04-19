@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, render_template
 from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO, emit
 from kafka import KafkaProducer, KafkaConsumer, TopicPartition
@@ -16,7 +16,7 @@ TOPIC_NAME = 'github-event'
 @app.route('/')
 @cross_origin()
 def home():
-    return send_from_directory('/templates', "index.html")
+    return render_template("index.html")
 
 """ Kafka endpoints """
 
@@ -46,4 +46,4 @@ def kafkaconsumer(message):
     consumer.close()
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=80)
+    socketio.run(app, host='0.0.0.0', port=8890)
