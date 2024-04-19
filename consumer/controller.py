@@ -36,7 +36,6 @@ class procesamiento_eventos:
         }), 200
         pass
 
-
     
     def procesar_evento_github(self, data):
         print("Procesando evento de GitHub...")

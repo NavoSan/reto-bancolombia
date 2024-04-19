@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from rutas import main 
 from kafka import KafkaProducer, KafkaConsumer
 import json
-
+from controller import procesamiento_eventos
 app = Flask(__name__)
 
 # Registro del Blueprint del archivo rutas.py
@@ -37,6 +37,9 @@ def github_webhook():
         data = request.json
         last_request_status = f"Last request was successful. Data received: {data}"
         send_event_to_kafka('github-events', data)
+
+        procesamiento_eventos.procesar_evento_github(data)
+
         return jsonify({'status': 'Received GitHub events',}), 200
     
     except Exception as e:
@@ -52,6 +55,8 @@ def azure_webhook():
         last_request_status = f"Last request was successful. Data received: {data}"
         send_event_to_kafka('azure-events', data)
 
+        procesamiento_eventos.procesar_evento_azure(data)
+
         return jsonify({'status': 'Received Azure event'}), 200 #, 'respuesta':respuesta}), 200
     except Exception as e:
         print(e)
@@ -65,6 +70,9 @@ def gitlab_webhook():
         data = request.json
         last_request_status = f"Last request was successful. Data received: {data}"
         send_event_to_kafka('gitlab-events', data)
+
+        procesamiento_eventos.procesar_evento_gitlab(data)
+
         return jsonify({'status': 'Received GitLab event'}), 200 #, 'respuesta':respuesta}), 200
     except Exception as e:
         print(e)
