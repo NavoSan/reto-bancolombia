@@ -2,15 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kafka Messages</title>
+    <title>Kafka Event Stream</title>
+    <script src="https://cdn.socket.io/socket.io-3.1.3.min.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/stream');
+
+            socket.on('new_message', function (msg) {
+                var node = document.createElement("LI");
+                var textnode = document.createTextNode(JSON.stringify(msg.data));
+                node.appendChild(textnode);
+                document.getElementById("messages").appendChild(node);
+            });
+        });
+    </script>
 </head>
 <body>
-    <h1>Messages from Kafka</h1>
-    <ul>
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
+    <h1>Kafka Messages</h1>
+    <ul id="messages"></ul>
 </body>
 </html>
