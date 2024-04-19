@@ -44,4 +44,4 @@ def run_kafka_consumer():
 
 if __name__ == '__main__':
     run_kafka_consumer()
-    app.run(host='0.0.0.0', port=8890, debug=True)
+    socketio.run(host='0.0.0.0', port=8890, debug=True)
