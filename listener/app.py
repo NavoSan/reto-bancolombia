@@ -3,7 +3,12 @@ from rutas import main
 from kafka import KafkaProducer, KafkaConsumer
 import json
 from controller import procesamiento_eventos
+import logging
+
+
+
 app = Flask(__name__)
+app.logger.setLevel(logging.DEBUG)
 
 # Registro del Blueprint del archivo rutas.py
 app.register_blueprint(main)
