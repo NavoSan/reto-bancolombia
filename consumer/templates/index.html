@@ -8,7 +8,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             // Conectar al endpoint de Kafka con Socket.IO
-            var socket = io.connect('http://localhost:9092/kafka');
+            var socket = io.connect('http://localhost:8890/kafka');
 
             // Escuchar eventos del tipo 'kafkaconsumer' y agregar los datos recibidos al elemento con id 'consumer'
             socket.on('kafkaconsumer', function(msg) {
