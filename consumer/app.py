@@ -1,55 +1,49 @@
-from flask import Flask, jsonify, render_template
-from rutas import main
-from kafka import KafkaConsumer
-import json
-from flask_socketio import SocketIO
-from threading import Thread
-
+from flask import Flask, send_from_directory
+from flask_cors import CORS, cross_origin
+from flask_socketio import SocketIO, emit
+from kafka import KafkaProducer, KafkaConsumer, TopicPartition
+import uuid
 
 app = Flask(__name__)
-app.register_blueprint(main)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
-messages = []
-
-def kafka_consumer():
-    consumer = KafkaConsumer(
-        'github-events',
-        'azure-events',
-        'gitlab-events',
-        bootstrap_servers='kafka:29092',
-        auto_offset_reset='earliest',
-        group_id='stream-consumer',
-        value_deserializer=lambda x: json.loads(x.decode('utf-8'))
-    )
-    for message in consumer:
-        app.logger.info(message.value)
-        messages.append(message.value)  # Añade cada mensaje a la lista global
-        socketio.emit('new_message', {'data': message.value}, namespace='/stream')
+BOOTSTRAP_SERVERS = 'kafka:29092'
+TOPIC_NAME = 'github-event'
 
 
-@app.route('/consume', methods=['GET'])
-def consume():
-    return render_template('consume.html')
+@app.route('/')
+@cross_origin()
+def home():
+    return send_from_directory('/templates', "index.html")
 
-@socketio.on('connect', namespace='/stream')
+""" Kafka endpoints """
+
+
+@socketio.on('connect', namespace='/kafka')
 def test_connect():
-    app.logger.info("Client connected")
-
-@socketio.on('disconnect', namespace='/stream')
-def test_disconnect():
-    app.logger.info("Client disconnected")
-
-@app.route('/webhook-status')
-def webhook_status():
-    return render_template('index.html', message=messages)
+    emit('logs', {'data': 'Connection established'})
 
 
-def run_kafka_consumer():
-    thread = Thread(target=kafka_consumer)
-    thread.daemon = True  # Hacer el hilo daemon para que finalice cuando el proceso principal lo haga
-    thread.start()
+@socketio.on('kafkaconsumer', namespace="/kafka")
+def kafkaconsumer(message):
+    consumer = KafkaConsumer(group_id='consumer-1',
+                             bootstrap_servers=BOOTSTRAP_SERVERS)
+    tp = TopicPartition(TOPIC_NAME, 0)
+    # register to the topic
+    consumer.assign([tp])
+
+    # obtain the last offset value
+    consumer.seek_to_end(tp)
+    lastOffset = consumer.position(tp)
+    consumer.seek_to_beginning(tp)
+    emit('kafkaconsumer1', {'data': ''})
+    for message in consumer:
+        emit('kafkaconsumer', {'data': message.value.decode('utf-8')})
+        if message.offset == lastOffset - 1:
+            break
+    consumer.close()
 
 if __name__ == '__main__':
-    run_kafka_consumer()
-    socketio.run(host='0.0.0.0', port=8890, debug=True)
+    socketio.run(app, host='0.0.0.0', port=80)
