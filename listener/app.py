@@ -8,7 +8,9 @@ import logging
 
 
 app = Flask(__name__)
-app.logger.setLevel(logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+
 
 # Registro del Blueprint del archivo rutas.py
 app.register_blueprint(main)

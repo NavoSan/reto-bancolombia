@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from kafka import KafkaProducer, KafkaConsumer
 import json
 from databaseConnection import conexionBD
+from app import app
 
 class procesamiento_eventos:
     def __init__(self, data):
@@ -68,6 +69,7 @@ class procesamiento_eventos:
     
     
     def obtener_tipo_evento(self):
+        app.logger.info("Entro a obtener_tipo_evento")
         publisherId = self.data.get('publisherId')
         if 'pipelines' in publisherId:
             info = self.procesar_pipeline()
@@ -82,7 +84,7 @@ class procesamiento_eventos:
                 return info
 
     def procesar_evento_azure(self):
-        print("Procesando evento de Azure DevOps...")
+        app.logger.info("Entro a procesar_evento_azure")
         event= self.obtener_tipo_evento()
         tipoEvento = event['event']
 
